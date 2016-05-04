@@ -19,11 +19,19 @@
 // Total length of one servo control period. Given in units of LOOP_DELAY
 #define SERVO_SIGNAL_PERIOD 20
 
-// Length of servo control signal.Given in microseconds
+// Length of servo control signal. Given in microseconds
 // 1700 -middle
-// higher -> move counter clockwise
-#define SERVO_TIME_LOW 1100
-#define SERVO_TIME_HIGH 1900
+// higher -> move clockwise
+// Given individually for each servo, since they seem to react
+// differently to the same signal
+#define SERVO_1_TIME_LOW 1000
+#define SERVO_1_TIME_HIGH 1950
+#define SERVO_2_TIME_LOW 1100
+#define SERVO_2_TIME_HIGH 1850
+#define SERVO_3_TIME_LOW 1150
+#define SERVO_3_TIME_HIGH 1950
+#define SERVO_4_TIME_LOW 750
+#define SERVO_4_TIME_HIGH 1500
 
 // Total amount of valves in the system
 #define VALVE_COUNT 4

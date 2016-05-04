@@ -7,14 +7,22 @@
 
 #include "ValveController.h"
 
-void ValveController::initialize(
-    uint8_t pinn,
-    uint64_t counterStart
-) {
-    pin = pinn;
-    counter = counterStart;
-    open = false;
+ValveController::ValveController() {
 }
+
+ValveController::ValveController(
+    uint8_t servoPin,
+    uint16_t lowPos,
+    uint16_t highPos,
+    uint64_t counterStart
+) :
+    pin(servoPin),
+    lowPosition(lowPos),
+    highPosition(highPos),
+    counter(counterStart),
+    open(false) {
+}
+
 
 void ValveController::run() {
     counter++;
@@ -28,14 +36,25 @@ void ValveController::run() {
     }
 }
 
+// Wraps _delay_us so that is is adjustable.
+void delay(uint16_t delayUs) {
+    #define UNIT_US 50
+
+    int counter = 0;
+    while(counter < delayUs) {
+        _delay_us(UNIT_US);
+        counter += UNIT_US;
+    }
+}
+
 void ValveController::setPosition(bool open) {
     PORTB |= BV(pin);
 
     if(open) {
-        _delay_us(SERVO_TIME_HIGH);
+        delay(lowPosition);
     }
     else {
-        _delay_us(SERVO_TIME_LOW);
+        delay(highPosition);
     }
 
     PORTB &= ~BV(pin);
