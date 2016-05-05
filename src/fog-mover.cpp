@@ -14,6 +14,7 @@
 #include <avr/io.h>
 #include <util/delay.h>
 
+#include "FogGeneratorController.h"
 #include "ValveController.h"
 
 #ifdef DEBUG
@@ -40,10 +41,13 @@ int main() {
     #endif
 
     // Set output pins:
+    //    D4 (fog generator trigger)
     //    D6 (indicator)
     //    B4, B5, B6, B7 (servo control)
-    DDRD |= BV(DDD6);
+    DDRD |= BV(DDD4) | BV(DDD6);
     DDRB |= BV(DDB4) | BV(DDB5) | BV(DDB6) | BV(DDB7);
+
+    FogGeneratorController generatorController(FOG_OFF_PERIOD, FOG_ON_PERIOD);
 
     ValveController valves[VALVE_COUNT];
     valves[0] = ValveController(
@@ -85,6 +89,8 @@ int main() {
             indicatorLit = !indicatorLit;
             setIndicator(indicatorLit);
         }
+
+        generatorController.run();
 
         for(int i = 0; i < VALVE_COUNT; i++) {
             valves[i].run();

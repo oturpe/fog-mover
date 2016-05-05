@@ -8,6 +8,14 @@
 // the indicator is lit and darkened. Given in units of LOOP_DELAY.
 #define INDICATOR_HALF_PERIOD 500
 
+// How long the fog machine is off until it next switches on. Given in units of
+// LOOP_DELAY.
+#define FOG_OFF_PERIOD 500
+
+// How long the fog machine is on until it switches off. Given in units of
+// LOOP_DELAY.
+#define FOG_ON_PERIOD 150
+
 // Servo half period. Given in units of servo signals (~SERVO_SIGNAL_PERIOD).
 #define SERVO_HALF_PERIOD 250
 
