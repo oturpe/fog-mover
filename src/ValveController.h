@@ -1,19 +1,24 @@
+/// \class ValveController
+///
+/// Runs a single valve that is actuated by a hobby servo. Expects regularly
+/// spaced calls to run() which acts as the clock of this class. Calling run()
+/// blocks if the controller decides that is it the time to send a new signal
+/// to servo.
 class ValveController {
 public:
-
     /// \brief
     ///    Initializes a new valve controller without setting values. This is
     ///    not very useful constructor, but required by array initialization.
     ValveController();
 
-	/// \brief
-	///    Initializes a new valve controller.
-	///
-	/// \param servoPin
-	///    The pin in port B that controls the servo motor actuator.
-	///
-	/// \param counterStart
-	///    Start position of counter
+    /// \brief
+    ///    Initializes a new valve controller.
+    ///
+    /// \param servoPin
+    ///    The pin in port B that controls the servo motor actuator.
+    ///
+    /// \param counterStart
+    ///    Start position of counter
     ValveController(
         uint8_t servoPin,
         uint16_t lowPos,
@@ -22,7 +27,6 @@ public:
     );
 
 public:
-
     /// \brief
     ///    Instructs the controller to advance one step in sequence, essentially
     ///    stepping the controller's clock.
