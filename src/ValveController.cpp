@@ -12,49 +12,66 @@ ValveController::ValveController() {
 
 ValveController::ValveController(
     uint8_t servoPin,
-    uint16_t lowPos,
-    uint16_t highPos,
-    uint64_t counterStart
+    uint16_t openPosition,
+    uint16_t closedPosition
 ) :
     pin(servoPin),
-    lowPosition(lowPos),
-    highPosition(highPos),
-    counter(counterStart),
-    open(false) {
+    openPosition(openPosition),
+    closedPosition(closedPosition),
+    counter(0),
+    delay(0),
+    open(false),
+    moving(false) {
 }
 
-
 void ValveController::run() {
+    if (delay > 0) {
+        delay--;
+        return;
+    }
+
+    if (moving && ((counter % SERVO_SIGNAL_PERIOD) == 0)) {
+        signalServo();
+    }
+
+    if (counter == SERVO_MOVE_PERIOD) {
+        moving = false;
+    }
+
     counter++;
+}
 
-    if (counter % SERVO_SIGNAL_PERIOD) {
-        setPosition(open);
+void ValveController::setOpen(bool newOpen, uint16_t newDelay) {
+    if (newOpen == open) {
+        // Nothing to do
+        return;
     }
 
-    if (counter % SERVO_HALF_PERIOD == 0) {
-        open = !open;
-    }
+    open = newOpen;
+    moving = true;
+    counter = 0;
+    delay = newDelay;
 }
 
 // Wraps _delay_us so that is is adjustable.
-void delay(uint16_t delayUs) {
+void busyLoop(uint16_t delayUs) {
     #define UNIT_US 50
 
-    int counter = 0;
-    while(counter < delayUs) {
+    int delayCounter = 0;
+    while(delayCounter < delayUs) {
         _delay_us(UNIT_US);
-        counter += UNIT_US;
+        delayCounter += UNIT_US;
     }
 }
 
-void ValveController::setPosition(bool open) {
+void ValveController::signalServo() {
     PORTB |= BV(pin);
 
     if(open) {
-        delay(lowPosition);
+        busyLoop(openPosition);
     }
     else {
-        delay(highPosition);
+        busyLoop(closedPosition);
     }
 
     PORTB &= ~BV(pin);

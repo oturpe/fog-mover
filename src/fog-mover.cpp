@@ -14,12 +14,10 @@
 #include <avr/io.h>
 #include <util/delay.h>
 
+#include "PololuStepperController.h"
 #include "FogGeneratorController.h"
 #include "ValveController.h"
-
-#ifdef DEBUG
-#include "Debug.h"
-#endif
+#include "Choreographer.h"
 
 /// \brief
 ///    Turns th indicator led on of off
@@ -33,67 +31,69 @@ inline void setIndicator(bool lit) {
     PORTD &= ~BV(PORTD6);
 }
 
-int main() {
-    #ifdef DEBUG
-        /* TODO: implement debugging
-        Debug debug(DEBUG_FREQ);
-        */
-    #endif
+FogGeneratorController generatorController;
 
+PololuStepperController motorController(BELLOW_STEP_HALF_PERIOD);
+
+ValveController exitValve(
+    PORTB4,
+    SERVO_1_TIME_OPEN,
+    SERVO_1_TIME_CLOSED
+);
+
+ValveController topValve(
+    PORTB5,
+    SERVO_2_TIME_OPEN,
+    SERVO_2_TIME_CLOSED
+);
+
+ValveController bottomValve(
+    PORTB6,
+    SERVO_3_TIME_OPEN,
+    SERVO_3_TIME_CLOSED
+);
+
+Choreographer choreographer(
+    generatorController,
+    motorController,
+    exitValve,
+    topValve,
+    bottomValve
+);
+
+int main() {
     // Set output pins:
+    //    D0, D1, A1 (motor control)
     //    D4 (fog generator trigger)
     //    D6 (indicator)
     //    B4, B5, B6, B7 (servo control)
-    DDRD |= BV(DDD4) | BV(DDD6);
+    DDRA |= BV(1);
     DDRB |= BV(DDB4) | BV(DDB5) | BV(DDB6) | BV(DDB7);
+    DDRD |= BV(DDD0)| BV(DDD1) | BV(DDD2) | BV(DDD3) | BV(DDD4) | BV(DDD6);
 
-    FogGeneratorController generatorController(FOG_OFF_PERIOD, FOG_ON_PERIOD);
+    exitValve.setOpen(false, 0);
+    topValve.setOpen(false, SERVO_MOVE_PERIOD);
+    bottomValve.setOpen(false, 2*SERVO_MOVE_PERIOD);
 
-    ValveController valves[VALVE_COUNT];
-    valves[0] = ValveController(
-        PORTB4,
-        SERVO_1_TIME_LOW,
-        SERVO_1_TIME_HIGH,
-        0
-    );
+    choreographer.registerEvent(1, BLOW_FOG);
+    choreographer.registerEvent(4500, PULL_FOG);
+    choreographer.registerEvent(27000, LOWER_BELLOW);
+    choreographer.registerEvent(60000, END);
 
-    valves[1] = ValveController(
-        PORTB5,
-        SERVO_2_TIME_LOW,
-        SERVO_2_TIME_HIGH,
-        SERVO_HALF_PERIOD/4
-    );
+    bool indicatorLit = true;
+    uint32_t counter = 0;
 
-    valves[2] = ValveController(
-        PORTB6,
-        SERVO_3_TIME_LOW,
-        SERVO_3_TIME_HIGH,
-        (SERVO_HALF_PERIOD*2)/4
-    );
-
-    valves[3] = ValveController(
-        PORTB7,
-        SERVO_4_TIME_LOW,
-        SERVO_4_TIME_HIGH,
-        (SERVO_HALF_PERIOD*3)/4
-    );
-
-    bool indicatorLit = false;
-    uint64_t counter = 0;
+    _delay_ms(STARTUP_DELAY);
 
     while(true) {
         counter += 1;
-        _delay_us(LOOP_DELAY);
+        _delay_ms(LOOP_DELAY);
 
         if(counter % INDICATOR_HALF_PERIOD == 0) {
             indicatorLit = !indicatorLit;
             setIndicator(indicatorLit);
         }
 
-        generatorController.run();
-
-        for(int i = 0; i < VALVE_COUNT; i++) {
-            valves[i].run();
-        }
+        choreographer.run();
     }
 }

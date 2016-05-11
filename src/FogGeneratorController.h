@@ -8,28 +8,26 @@ class FogGeneratorController {
 public:
     /// \brief
     ///    Initializes a new fog generator controller
-    ///
-    /// \param offPeriod
-    ///    How long the trigger remains off when switched off
-    ///
-    /// \param onPeriod
-    ///    How long the trigger remains off when switched on
-    FogGeneratorController(uint16_t offPeriod, uint16_t onPeriod);
+    FogGeneratorController();
 
 public:
+    /// \brief
+    ///    Tells the generator to start blowing. Blowing continues for period
+    ///    defined by onPeriod member variable.
+    void blow();
+
     /// \brief
     ///    Instructs the controller to advance one step in sequence, essentially
     ///    stepping the controller's clock.
     void run();
 
 private:
-    /// How long fog generation remains off
-    const uint16_t offPeriod;
+    /// Counts how long fog has been blown
+    uint16_t counter;
 
-    /// How long fog generation remains on
-    const uint16_t onPeriod;
+    /// Remaining repeats
+    uint8_t repeats;
 
-    uint64_t counter;
-    /// If the trigger is on right now
-    bool on;
+    /// If fog is running right now
+    bool puffing;
 };

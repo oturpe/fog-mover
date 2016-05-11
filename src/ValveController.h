@@ -16,14 +16,10 @@ public:
     ///
     /// \param servoPin
     ///    The pin in port B that controls the servo motor actuator.
-    ///
-    /// \param counterStart
-    ///    Start position of counter
     ValveController(
         uint8_t servoPin,
-        uint16_t lowPos,
-        uint16_t highPos,
-        uint64_t counterStart
+        uint16_t openPosition,
+        uint16_t closedPosition
     );
 
 public:
@@ -33,27 +29,43 @@ public:
     void run();
 
     /// \brief
-    ///    Instructrs a servo motor to rotate its valve to desired position.
+    ///    Instructs the servo to assume the given position.
     ///
-    /// \param open
-    ///    If the valve should be open
-    void setPosition(bool open);
+    /// \param newOpen
+    ///    If the new position is the open position
+    ///
+    /// \param newDelay
+    ///    How long to wait before starting move
+    void setOpen(bool newOpen,uint16_t newDelay);
+
+private:
+    /// \brief
+    ///    Instructrs a servo motor to rotate its valve to current desired
+    ///    position as defined by value of member variable open.
+    void signalServo();
 
 private:
     /// Pin in port B this controller controls.
     uint8_t pin;
 
-    /// Signal length to send the servo to low position. Given in
+    /// Signal length to send the servo to open position. Given in
     /// microseconds.
-    uint16_t lowPosition;
+    uint16_t openPosition;
 
-    /// Signal length to send the servo to high position. Given in
+    /// Signal length to send the servo to closed position. Given in
     /// microseconds.
-    uint16_t highPosition;
+    uint16_t closedPosition;
 
     /// Timestep counter
-    uint64_t counter;
+    uint32_t counter;
 
+    /// Delay before starting to move
+    uint16_t delay;
+
+    /// If valve is right now moving to a new position.
+    bool moving;
+
+public: //temp?
     /// If valve should be open right now.
     bool open;
 };
