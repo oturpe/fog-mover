@@ -3,7 +3,8 @@ sourceDir=src
 #libDir=src/lib/DmxSimple
 targetDir=target
 mcu=attiny2313
-programmer=arduinoisp
+#programmer=arduinoisp
+programmer=avrisp
 
 if [ ! -e ${targetDir} ]; then
   mkdir ${targetDir}
@@ -21,7 +22,7 @@ if [ -$? -ne 0 ]; then
   exit 0
 fi
 
-sudo avrdude -c ${programmer} -p ${mcu} -U flash:w:${targetDir}/${projectName}.hex
+sudo avrdude -c ${programmer} -b 19200 -p ${mcu} -P /dev/ttyACM0 -U flash:w:${targetDir}/${projectName}.hex
 if [ $? -ne 0 ]; then
   echo "Upload failed"
   exit 0
