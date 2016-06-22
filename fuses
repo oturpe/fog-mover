@@ -1,5 +1,4 @@
 mcu=attiny2313
-#programmer=arduinoisp
-programmer=arduino
+programmer=arduinoisp
 
-sudo avrdude -c ${programmer} -b 19200 -P /dev/ttyACM0 -p ${mcu} -U lfuse:w:0xe4:m -U hfuse:w:0xd9:m -U efuse:w:0xff:m
+sudo avrdude -c ${programmer} -b 19200 -p ${mcu} -U lfuse:w:0xe4:m -U hfuse:w:0xd9:m -U efuse:w:0xff:m
