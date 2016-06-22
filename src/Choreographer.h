@@ -5,13 +5,13 @@ class PololuStepperController;
 class ValveController;
 
 enum Event {
-    // Nothing happens
+    // Nothing happens.
     NONE,
-    // Fog machine starts to blow fog
+    // Fog machine starts to blow fog.
     BLOW_FOG,
-    // Bellow raises and stays up, path from above tree to exit opens
+    // Bellow raises and stays up, path from above tree to exit opens.
     PULL_FOG,
-    // Lowers the bellow
+    // Bellow goes down.
     LOWER_BELLOW,
     // Signals the end of choreography. Starts from the beginning again.
     END
@@ -19,7 +19,10 @@ enum Event {
 
 /// \class Choreographer
 ///
-/// Allows defining and executing a fog moving choreography.
+/// Allows defining and executing a fog moving choreography. Events from Event
+/// enumeration are registered to specified instants using registerEvent()
+/// function. Each time run() is called, internal counter is incremented and
+/// events corresponding to counter value are run.
 class Choreographer {
 public:
     /// \brief
