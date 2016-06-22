@@ -78,7 +78,7 @@ int main() {
     choreographer.registerEvent(1, BLOW_FOG);
     choreographer.registerEvent(4500, PULL_FOG);
     choreographer.registerEvent(27000, LOWER_BELLOW);
-    choreographer.registerEvent(60000, END);
+    choreographer.registerEvent(45000, END);
 
     bool indicatorLit = true;
     uint32_t counter = 0;
