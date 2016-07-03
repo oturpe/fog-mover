@@ -1,8 +1,6 @@
 ## Directory structure
 
 1.  *schematic* contains (incomplete and outdated) schematic created using [qucs][qucs].
-2.  *hardware*/*production-files* is the target for production files generated
-    by KiCad. No files saved there are stored to source control.
 3.  *src* contains firmware source code
 4.  *target* contains compiled firmware and intermediate files. No files saved
     there are stored to source control.
