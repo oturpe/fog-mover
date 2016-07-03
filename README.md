@@ -7,7 +7,7 @@
 4.  *target* contains compiled firmware and intermediate files. No files saved
     there are stored to source control.
 
-[qucs]: hhttp://qucs.sourceforge.net/
+[qucs]: http://qucs.sourceforge.net/
 
 ## Build system
 
